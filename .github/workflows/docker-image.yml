@@ -47,4 +47,5 @@ jobs:
           docker rm -f rianalytics
           docker image rm dhairya137/rianalytics
           docker run -d --name=rianalytics -p 80:8000 dhairya137/rianalytics:latest
+          docker images --digests
           echo "App is runnning fine..."
