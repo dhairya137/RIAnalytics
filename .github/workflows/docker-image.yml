@@ -44,6 +44,6 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         port: ${{ secrets.PORT }}
         script: |
-          sudo docker rm -f rianalytics
-          sudo docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
+          docker rm -f rianalytics
+          docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
           echo "App is runnning fine..."
