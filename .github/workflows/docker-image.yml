@@ -24,13 +24,14 @@ jobs:
       id: date
       run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M')"
     - name: Build the Docker image
-      run: docker build . --tag dhairya137/rianalytics:dev-${{ steps.date.outputs.date }}
+      run: docker build . --tag dhairya137/rianalytics:dev-$(git log -1 --pretty=%h)
       
     - name: Docker Push
-      run: docker push dhairya137/rianalytics:dev${{ steps.date.outputs.date }}
+      run: docker push dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
       
       
   push:
+    needs: build
   
     runs-on: ubuntu-latest
   
@@ -44,5 +45,5 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           sudo docker rm -f rianalytics
-          sudo docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:dev${{ steps.date.outputs.date }}
+          sudo docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
           echo "App is runnning fine..."
