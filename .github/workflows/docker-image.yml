@@ -28,4 +28,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: dhairya137/rianalytics:$(date +%s)
+        tags: dhairya137/rianalytics:latest
