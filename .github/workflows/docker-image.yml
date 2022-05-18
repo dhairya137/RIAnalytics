@@ -6,11 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-# Env variable
-env:
-  DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
-  DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-
 jobs:
 
   build:
@@ -27,9 +22,27 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}  
     - name: Get current date # get the date of the build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M-%S')"
+      run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M')"
     - name: Build the Docker image
-      run: docker build . --tag dhairya137/rianalytics:${{ steps.date.outputs.date }}
+      run: docker build . --tag dhairya137/rianalytics:dev-${{ steps.date.outputs.date }}
       
     - name: Docker Push
-      run: docker push dhairya137/rianalytics:${{ steps.date.outputs.date }}
+      run: docker push dhairya137/rianalytics:dev${{ steps.date.outputs.date }}
+      
+      
+  push:
+  
+    runs-on: ubuntu-latest
+  
+    steps:
+    - name: Remote ssh into VM
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.SSH_USER }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: |
+          sudo docker rm -f rianalytics
+          sudo docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:dev${{ steps.date.outputs.date }}
+          echo "App is runnning fine..."
