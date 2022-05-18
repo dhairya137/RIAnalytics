@@ -20,14 +20,14 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}  
-    - name: Get current date # get the date of the build
+    - name: Get current commit id # get the date of the build
       id: date
-      run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M')"
+      run: echo "::set-output name=dockertag::$(git log -1 --pretty=%h)"  # Use this tag if you want -> dev${{ steps.date.outputs.dockertag }}
     - name: Build the Docker image
-      run: docker build . --tag dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
+      run: docker build . --tag dhairya137/rianalytics:latest
       
     - name: Docker Push
-      run: docker push dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
+      run: docker push dhairya137/rianalytics:latest
       
       
   push:
@@ -45,5 +45,5 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           docker rm -f rianalytics
-          docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
+          docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:latest
           echo "App is runnning fine..."
