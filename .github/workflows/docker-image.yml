@@ -45,5 +45,5 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           docker rm -f rianalytics
-          docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:latest
+          docker run --name=rianalytics -p 80:8000 dhairya137/rianalytics:latest -d
           echo "App is runnning fine..."
