@@ -24,10 +24,10 @@ jobs:
       id: date
       run: echo "::set-output name=dockertag::$(git log -1 --pretty=%h)"  # Use this tag if you want -> dev${{ steps.date.outputs.dockertag }}
     - name: Build the Docker image
-      run: docker build . --tag dhairya137/rianalytics:latest
+      run: docker build . --tag dhairya137/rianalytics:dev${{ steps.date.outputs.dockertag }}
       
     - name: Docker Push
-      run: docker push dhairya137/rianalytics:latest
+      run: docker push dhairya137/rianalytics:dev${{ steps.date.outputs.dockertag }}
       
       
   push:
@@ -45,5 +45,5 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           docker rm -f rianalytics
-          docker run -d --name=rianalytics -p 80:8000 dhairya137/rianalytics:latest
+          docker run -d --name=rianalytics -p 80:8000 dhairya137/rianalytics
           echo "App is runnning fine..."
