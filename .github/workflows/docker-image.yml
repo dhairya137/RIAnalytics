@@ -24,7 +24,7 @@ jobs:
       id: date
       run: echo "::set-output name=date::$(date +'%Y-%m-%d--%M')"
     - name: Build the Docker image
-      run: docker build . --tag dhairya137/rianalytics:dev-$(git log -1 --pretty=%h)
+      run: docker build . --tag dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
       
     - name: Docker Push
       run: docker push dhairya137/rianalytics:dev$(git log -1 --pretty=%h)
