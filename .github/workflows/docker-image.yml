@@ -26,6 +26,6 @@ jobs:
       name: Build and push
       uses: docker/build-push-action@v3
       with:
-        context: .
+        context: ./Dockerfile
         push: true
         tags: dhairya137/rianalytics:latest
