@@ -28,10 +28,24 @@ stages:
        - agent.name -equals test 
     steps:
     - task: Docker@2
+      displayName: Login to Docker Hub
+      inputs:
+        command: login
+        containerRegistry: ${{ variables.containerRegistry }}
+    - task: Docker@2
       displayName: Build and push docker image
       inputs:
         command: buildAndPush
-        repository: ${{ variables.repository }}
+        repository: dhairya137/rianalytics
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         containerRegistry: ${{ variables.containerRegistry }}
         tags: $(Build.BuildID)
+    - task: CmdLine@2
+      inputs:
+        script: |
+          #!/bin/bash
+              docker rm -f rianalytics
+                    docker image rm dhairya137/rianalytics
+                    docker run -d --name=rianalytics -p 80:8000 dhairya137/rianalytics:latest
+                    docker images --digests
+                    echo "App is runnning fine..."
