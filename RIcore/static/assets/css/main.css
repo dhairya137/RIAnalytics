@@ -248,13 +248,13 @@ header
 }
 
 .header-area .main-nav .logo {
-  line-height: 120px;
+  line-height: 80px;
   color: #fff;
   font-size: 28px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 2px;
-  float: left;
+  /* float: left; */
   -webkit-transition: all 0.3s ease 0s;
   -moz-transition: all 0.3s ease 0s;
   -o-transition: all 0.3s ease 0s;
@@ -263,7 +263,7 @@ header
 
 .background-header .main-nav .logo {
   line-height: 80px;
-  width: 160px;
+  min-width: 250px;
 }
 
 .background-header .nav {
@@ -588,6 +588,7 @@ header
   .header-area .logo {
     margin-left: 0px;
     line-height: 80px;
+    min-width: 250px;
   }
   .header-area .menu-trigger {
     display: block !important;

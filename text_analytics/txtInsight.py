@@ -14,13 +14,14 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt, mpld3
 
 # %matplotlib inline
-
+info = {'STATUS':'Inititated','FILE':None}
 class TextAnalyst():
     
 
     def __init__(self):
-        from RIAnalytics.settings import FILES_DIR
+        from RIAnalytics.settings import FILES_DIR, OUTPUT_DIR
         self.FILES_DIR = FILES_DIR
+        self.OUTPUT_DIR = OUTPUT_DIR
         pass
                     
     def highlight_pdf(self, file_name, search_terms):
@@ -40,8 +41,9 @@ class TextAnalyst():
             
             pdf_doc.save(output_buffer)
             pdf_doc.close()
-
-            with open(f'{os.path.join(self.FILES_DIR,file_name)}', mode='wb') as f:
+            f = open(f'{os.path.join(self.OUTPUT_DIR,file_name)}', mode='wb')
+            f.close()
+            with open(f'{os.path.join(self.OUTPUT_DIR,file_name)}', mode='wb') as f:
                 f.write(output_buffer.getbuffer())
         except Exception as E:
             print('errors', str(E))
@@ -71,7 +73,7 @@ class TextAnalyst():
                 if term in sent_lower:
                     start = sent_lower.index(term)
                     end = start + len(term)
-                    html = '<p>' + sent[:start] + '<mark>' + sent[start:end] + '</mark>' + sent[end:] + '</p>'
+                    html = '<p>' + sent[:start] + '<mark>' + sent[start:end] + '</mark>' + sent[end:] + '</p><br><br>'
                     html_content += f'''{HTML(html).data}'''
         return html_content
     
@@ -96,7 +98,7 @@ class TextAnalyst():
                 for sent in sentences:
                     start = sent.lower().index(row['Search_Key'].lower())
                     end = start + len(row['Search_Key'])
-                    html = '<p>' + sent[:start] + '<mark>' + sent[start:end] + '</mark>' + sent[end:] + '<b>' + row['File_Name'] + '</b>' + '</p>'
+                    html = '<p>' + sent[:start] + '<mark>' + sent[start:end] + '</mark>' + sent[end:] + '<b>' + row['File_Name'] + '</b>' + '</p><br><br>'
                     html_content += f'''{HTML(html).data}'''
         return html_content
     
@@ -111,7 +113,12 @@ class TextAnalyst():
         for sent in sentences:
             sent_lower = sent.lower()
             if key_term in sent_lower:
-                terget_sentences.append(sent)
+                ### batch of code to modify the secntences and hightlight key terrm
+                start = sent_lower.index(key_term)
+                end = start + len(key_term)
+                new_sent = '<p>' + sent[:start] + '<mark>' + sent[start:end] + '</mark>' + sent[end:] + '</p>'
+                
+                terget_sentences.append(new_sent)
                 count += 1
         
         return count, terget_sentences
@@ -128,9 +135,9 @@ class TextAnalyst():
             result_dict['Search_Key'] = s_key
             result_dict['No_Of_Occurence'] = count
             result_dict['Goals'] = goal
-            result_dict['Sentence'] = ' \n'.join(key_sentences)
-    
-            list_of_data.append(result_dict)
+            result_dict['Sentence'] = ' <br><br>'.join(key_sentences)
+            if count > 0:
+                list_of_data.append(result_dict)
         
         return list_of_data
     
@@ -185,41 +192,53 @@ class TextAnalyst():
         try:
             html_content = "<div class='col-12 p-4'>"
             self.files = os.listdir(self.FILES_DIR)
+            info['FILE'] = os.listdir(self.FILES_DIR)
+            
             pdf_files = sorted([f for f in self.files if f.endswith('.pdf')])
+            info['STATUS']= pdf_files
             for file in self.files:
                 if file.endswith('.xlsx'):
                     self.excel_file = os.path.join(self.FILES_DIR,file) 
                     break
             search_df = pd.read_excel(self.excel_file)
             search_terms = search_df['Key Terms']
-            print('Stage 1: Successful')
+            info['STATUS']= 'Initial processing Successful'
             # if keywords:
             #     search_terms = pd.concat([search_terms,pd.Series(list(keywords))],axis=0)
-
-            print('Stage 1.5: Successful')
-            for file_name in pdf_files:
-                html_content+= self.highlight_pdf(file_name, search_terms)
-                
-            print('Stage 2: Successful') 
             result_list = []
             
             for file_name in pdf_files:
+                
+                html_content+= self.highlight_pdf(file_name, search_terms)
+                
+                info['STATUS']= f'Hightlighting Successful for {file_name}'
+                info['STATUS']=  f'Extracting text for {file_name}'
                 text = self.extract_text(file_name)
+                info['STATUS']= f'Extracted text for {file_name}'
                 sentences = tokenize.sent_tokenize(text)
-                html_content = f'''<div style='text-align:center'>
+                info['STATUS']= f'Tokenizing for {file_name}'
+
+                html_content += f'''<h4 style='text-align:center;color:#ff511a;font-weight:500'>
                 {file_name}
-                </div>
+                </h4>
                 <br><br>
                 '''
+                info['STATUS']= f'Highlighting sentences for {file_name}'
                 html_content += self.highlight_sentences(sentences, search_terms.str.lower())
+                info['STATUS']= f'Stage 2.1: highlighted text for {file_name}'
             
-
+                info['STATUS']= f'Making table for {file_name}'
                 file_result = self.count_no_of_occurences(file_name, sentences, search_df)
+                info['STATUS']= f'Made table for {file_name}. Cleaning up'
                 result_list.extend(file_result)
-
+                try:
+                    os.remove(os.path.join(self.FILES_DIR,file_name))
+                    
+                except Exception as E:
+                    pass
+                
             self.df = pd.DataFrame(result_list)
-            
-            print('Stage 3: Successful')
+            info['STATUS']= f'Wrapping up {file_name}'
             pivot_table = self.df.groupby(['File_Name', 'Goals']).sum(['No of Occurance']).unstack()
             pivot_table = pivot_table.droplevel(0, axis=1).reset_index()
             self.df.to_excel('Text_Insight.xlsx', index=False)
@@ -228,11 +247,19 @@ class TextAnalyst():
             html_content += '''<div class="col-sm-12 p-4 "> '''
             html_content += self.df.to_html()
             html_content += "</div>"
-            html_content = html_content.replace('''<table border="1" class="dataframe">''', '''<table class="table small col-12" style="font-size:10px">''')
+            html_content = html_content.replace('''<table border="1" class="dataframe">''', '''<table class="table small col-12" style="font-size:10px">''').replace('&lt;','<').replace('&gt;','>')
             html_content += '''<div class='col-12 d-flex justify-content-center align-items-center'>'''
             html_content += self.make_circles()
             html_content += "</div>"
-            print('Stage 4: Done')
+            html_content += '''<div class="col-sm-12 p-4 "> '''
+            html_content += pivot_table.to_html()
+            html_content += "</div></div>"
+            html_content = html_content.replace('''<table border="1" class="dataframe">''', '''<table class="table small col-12" style="font-size:10px">''')
+            info['STATUS']= f'Done: {file_name}'
+            f = open('html_report.txt','w')
+            f.write(html_content)
+            f.close()
+            info['STATUS']= 'QUIT'
             return(html_content)
         except Exception as Error:
-            print(str(Error))
+             info['STATUS']= f" Exiting with Error {str(Error)}"

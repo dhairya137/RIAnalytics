@@ -32,15 +32,27 @@ def handle_uploaded_file(f, filename):
 def insights_form_processing(request):
     if request.method == 'POST':
       insights_form = insightsAnalyticsForm(request.POST)
+      all_files = []
       my_files=request.FILES.getlist('report_files')
       if insights_form.is_valid():
           for f in my_files:
+              all_files.append(f.name)
               info['reportFilename'] = f.name
               handle_uploaded_file(f, f.name)
           keyfile = request.FILES['keyword_file']
           info['keywordFilename'] = keyfile.name
           handle_uploaded_file(keyfile, keyfile.name)
-          return render(request,'text_report.html', context={'mode':'Insights','url':'http://localhost:8000/insights/generate'})
+
+
+
+          if request.is_secure():
+            protocol = 'https'
+          else:
+            protocol = 'http'
+
+          domain = protocol + "://" + request.META['HTTP_HOST']
+
+          return render(request,'text_report.html', context={'mode':'Text','files':all_files, 'url': f'{domain}/text/generate','statusurl': f'{domain}/returnstatus'})
       else:
           return render(request,'text_insights.html', context={'insightsform':insights_form})
 

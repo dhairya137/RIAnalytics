@@ -14,7 +14,14 @@
     </div>
   </div>
   <div  id='download_btn_div'>
-    <div class="shadow-sm p-4 bg-white border d-flex flex-row-reverse">
+    <div></div>"
+    <div class="shadow-sm p-4 bg-white border d-flex flex-row justify-content-end align-items-center">
+      <p>Download Files:</p>
+      {% if mode == 'Text' or mode == 'Insights'%}
+      {% for item in files %}
+      <a class="bg-white p-3 shadow-sm m-1 text-warning rounded" href="http://localhost:8000/download/{{item}}" download>{{item}} </a>
+      {% endfor %}
+      {% endif %}
       <button class="bg-primary p-2 text-white rounded" onclick="getPDF()">Download Report</button>
     </div>
   </div>
@@ -25,6 +32,7 @@
           <div class='card-body text-center'>
             <h1 style='color: #ff511a'>RI Analytics</h1>
             <p class='mt-2 mb-2'>Your {{mode}} report is being generated</p>
+            <p class='mt-2 mb-2 samll text-dark'  id="status_box"></p>
             <div style='color: #ff511a' class='col-12 d-flex col-6 p-3 justify-content-center align-items-center'><div class='spinner-border'></div></div>
           </div>
         </div>
@@ -45,10 +53,9 @@
   </section>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
-    // var report_filename = "{{reportFilename}}";
-    // var keyword_filename = "{{keywordFilename}}";
-    // var keywords = "{{keywords}}";
-    //report_filename, keyword_filename, keywords
+    var completed = false;
+    var timer = null;
+    
     function executeScriptElements(containerElement) {
         const scriptElements = containerElement.querySelectorAll("script");
 
@@ -64,9 +71,23 @@
           scriptElement.parentNode.replaceChild(clonedElement, scriptElement);
         });
       }
+    function check(){
+      let murl = "{{statusurl}}";
+      let response = fetch(murl);
+      try{
+        response.then( response=> response.json().then(data=> {
+          if (data.value == 'QUIT'){ clearInterval(timer);}
+          else{document.getElementById('status_box').textContent = data.value;console.log(`${data.value}`)}
+          attempts ++;
+        }));
+    }
+    catch(error){alert(error);}
+
+    }      
     function analyseText(){
-      url = "{{url}}";
+      let url = "{{url}}";
       let response = fetch(url);
+      timer = setInterval(check, 2000);
       document.getElementById('download_btn_div').style.display = "none";
       document.getElementById('reload_btn_div').style.display = "none";  
       try{
@@ -77,6 +98,7 @@
             document.getElementById('waiting').textContent = '';  
             document.getElementById('download_btn_div').style.display = "block"; 
             document.getElementById('reload_btn_div').style.display = "none"; 
+            clearInterval(timer);
           }
           else{
             document.getElementById('content').innerHTML = '';

@@ -36,11 +36,13 @@ def handle_uploaded_file(f, filename):
 def text_form_processing(request):
     if request.method == 'POST':
       text_form = textAnalyticsForm(request.POST)
+      all_files = []
       my_files= request.FILES.getlist('report_files')
       if text_form.is_valid():
         print('valid form')
         for f in my_files:
           info['reportFilename'] = f.name
+          all_files.append(f.name)
           handle_uploaded_file(f, f.name)
         keyfile = request.FILES['keyword_file']
         info['keywordFilename'] = keyfile.name
@@ -54,7 +56,7 @@ def text_form_processing(request):
 
         domain = protocol + "://" + request.META['HTTP_HOST']
 
-        return render(request,'text_report.html', context={'mode':'Text','url': f'{domain}/text/generate'})
+        return render(request,'text_report.html', context={'mode':'Text','files':all_files, 'url': f'{domain}/text/generate','statusurl': f'{domain}/returnstatus'})
       # if text_form.is_valid():
         
       #   '''
