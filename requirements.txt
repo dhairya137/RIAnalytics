@@ -11,7 +11,7 @@ configobj==5.0.6
 configparser==5.2.0
 cycler==0.11.0
 decorator==5.1.1
-
+Django==4.0
 et-xmlfile==1.1.0
 etelemetry==0.3.0
 executing==0.8.3
@@ -21,7 +21,7 @@ fonttools==4.33.3
 future==0.18.2
 httplib2==0.20.4
 idna==3.3
-
+ipython==8.3.0
 isodate==0.6.1
 jedi==0.18.1
 Jinja2==3.1.2
@@ -35,10 +35,10 @@ mpld3==0.5.7
 nibabel==3.2.2
 nipype==1.8.0
 nltk==3.7
-
+numpy==1.22.3
 openpyxl==3.0.9
 packaging==21.3
-
+pandas==1.4.2
 parso==0.8.3
 pathlib==1.0.1
 pickleshare==0.7.5
