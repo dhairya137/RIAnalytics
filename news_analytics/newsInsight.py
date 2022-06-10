@@ -1,6 +1,6 @@
 # ! apt-get install libpoppler-cpp-dev
 # ! pip install pdftotext
-import pdftotext
+# import pdftotext
 
 
 import os

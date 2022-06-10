@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-%np%6e@%q*4*65&l0ft0-b2r#8la=-jrb17-oh^2mpjk2a4^h&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -126,6 +126,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'RIcore/static/'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+IMAGE_ROOT = os.path.join(BASE_DIR, 'static')
 FILES_DIR = os.path.join(BASE_DIR, 'files')
 OUTPUT_DIR = os.path.join(BASE_DIR, 'output')
 

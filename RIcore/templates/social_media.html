@@ -37,17 +37,21 @@
                                 <h4 class="title">Text Insights</h4>
                               </div>
                               <div class="list-item d-flex flex-column" style="font-weight: 500;">
+                                <label for="handles_files">Upload Twitter Handles File</label> <br>
+                                <input type="file" name="handles_files" id="handles_files" class="form-control"/>
+                              </div>                              
+                              <div class="list-item d-flex flex-column" style="font-weight: 500;">
                                 <label for="search_keywords">Upload Search Keywords</label> <br>
                                 <input type="file" name="keyword_file" required id="search_keywords" class="form-control"/>
                               </div>
                               <div class="list-item d-flex flex-column" style="font-weight: 500;">
                                 <label for="search_keywords_text">Or enter keywords manually</label> <br>
-                                <textarea name="search_keywords_text" required name="keywords" id="search_keywords_text" cols="5" rows="5" class="form-control"></textarea>
+                                <textarea name="search_keywords_text" name="keywords" id="search_keywords_text" cols="5" rows="5" class="form-control"></textarea>
                                 <p class="text-muted">* Keep space between comma(,) and next keyword. Example: keyword1, keyword2, keyword3</p>
                               </div>
                               <div class="list-item d-flex flex-column" style="font-weight: 500;">
                                 <label for="tweets_n">Enter no. of tweets to download for each company</label> <br>
-                                <input type="text" id="tweets_n" name="no_of_tweets" required class="form-control"/>
+                                <input type="text" id="no_of_tweets" name="no_of_tweets" required class="form-control"/>
                               </div>
                               <div class="list-item d-flex flex-column" style="font-weight: 500;">
                                 <label>Enter twitter authentication keys</label> <br>

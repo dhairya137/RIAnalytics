@@ -45,3 +45,22 @@ def return_status_news(request):
   else:
     print(inf['STATUS'])
     return JsonResponse({'value':inf['STATUS']})
+
+def return_status_socials(request):
+  from social_analytics.socialAnalytics import info as inf
+  if inf['STATUS'] == 'QUIT' :
+    print(inf['STATUS'])
+    return JsonResponse({'value':'end'})
+  else:
+    print(inf['STATUS'])
+    return JsonResponse({'value':inf['STATUS']})
+
+
+def return_status_insights(request):
+  from insight_tools.wordAnalytics import info as inf
+  if inf['STATUS'] == 'QUIT' :
+    print(inf['STATUS'])
+    return JsonResponse({'value':'end'})
+  else:
+    print(inf['STATUS'])
+    return JsonResponse({'value':inf['STATUS']})

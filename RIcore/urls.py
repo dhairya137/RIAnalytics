@@ -8,5 +8,7 @@ urlpatterns = [
   path('services',services_page),
   path('returnstatus',return_status),
   path('returnNstatus',return_status_news),
+  path('returnSstatus',return_status_socials),
+  path('returnIstatus',return_status_insights),
   path('download/<str:file>',download_highlights),
 ]

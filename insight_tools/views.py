@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from .forms import *
 from RIAnalytics.settings import FILES_DIR
 import os
-from text_analytics.txtInsight import  TextAnalyst
+from .wordAnalytics import  WordAnalyst
 # Create your views here.
 info = {
   'reportFilename':'',
@@ -14,10 +14,10 @@ info = {
 def insights_page(request):
   return render(request, 'insights.html')
 
-def text_generate(request):
-  analyst = TextAnalyst()
+def insights_generate(request):
+  analyst = WordAnalyst(info['reportFilename'], info['keywordFilename'])
   try:
-    report = analyst.generateHTML(info['reportFilename'], info['keywordFilename'],info['keywords'])
+    report = analyst.generateHTML()
     return JsonResponse({'status':'successful', 'report':report})
   except Exception as E:
     print('Error',str(E))
@@ -36,15 +36,12 @@ def insights_form_processing(request):
       my_files=request.FILES.getlist('report_files')
       if insights_form.is_valid():
           for f in my_files:
-              all_files.append(f.name)
-              info['reportFilename'] = f.name
+              all_files.append(f.name)    
               handle_uploaded_file(f, f.name)
           keyfile = request.FILES['keyword_file']
           info['keywordFilename'] = keyfile.name
           handle_uploaded_file(keyfile, keyfile.name)
-
-
-
+          info['reportFilename'] = all_files
           if request.is_secure():
             protocol = 'https'
           else:
@@ -52,9 +49,9 @@ def insights_form_processing(request):
 
           domain = protocol + "://" + request.META['HTTP_HOST']
 
-          return render(request,'text_report.html', context={'mode':'Text','files':all_files, 'url': f'{domain}/text/generate','statusurl': f'{domain}/returnstatus'})
+          return render(request,'text_report.html', context={'mode':'Insights','files':'', 'url': f'{domain}/insights/generate','statusurl': f'{domain}/returnIstatus'})
       else:
-          return render(request,'text_insights.html', context={'insightsform':insights_form})
+          return render(request,'insights.html', context={'insightsform':insights_form})
 
       
     return HttpResponseRedirect(reverse('insights_mainpage'))
