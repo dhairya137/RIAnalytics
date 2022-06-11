@@ -11,32 +11,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2 # Working cicd
-      -
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - uses: actions/checkout@v2 # Working cicd
+    - 
+      name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}  
 
-      - name: Azure login
-      - uses: azure/docker-login@v1
-        with:
-          login-server: rianalytics.azurecr.io
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+    - name: Azure login
+    - uses: azure/docker-login@v1
+      with:
+        login-server: rianalytics.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      # - name: Get current commit id # get the date of the build
-      #   id: date
-      #   run: echo "::set-output name=dockertag::$(git log -1 --pretty=%h)" # Use this tag if you want -> dev${{ steps.date.outputs.dockertag }}
-      - name: Build the Docker image
-        run: docker build . --tag dhairya137/rianalytics:latest
+    # - name: Get current commit id # get the date of the build
+    #   id: date
+    #   run: echo "::set-output name=dockertag::$(git log -1 --pretty=%h)" # Use this tag if you want -> dev${{ steps.date.outputs.dockertag }}
+    - name: Build the Docker image
+      run: docker build . --tag dhairya137/rianalytics:latest
 
-      - name: Push image to Docker hub
-        run: docker push dhairya137/rianalytics:latest
+    - name: Push image to Docker hub
+      run: docker push dhairya137/rianalytics:latest
 
-      - name: Push image to Azure Container Registry
-        run: docker push rianalytics.azurecr.io/rianalytics:latest
+    - name: Push image to Azure Container Registry
+      run: docker push rianalytics.azurecr.io/rianalytics:latest
 
   push:
     needs: build
