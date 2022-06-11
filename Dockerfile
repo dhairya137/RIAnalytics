@@ -1,5 +1,5 @@
 # FROM python:3.8-slim-buster
-FROM dhairya137/py3.8sm-poppler20:v1 AS base
+FROM dhairya137/py3.8sm-poppler20:v1 
 
 ENV PYTHONUNBUFFERED 1
 
@@ -21,4 +21,3 @@ RUN python manage.py migrate
 RUN python manage.py collectstatic --no-input
 
 CMD python manage.py runserver 0.0.0.0:80
-
