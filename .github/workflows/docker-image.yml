@@ -35,8 +35,8 @@ jobs:
     - name: Build the Docker image
       run: docker build . --tag dhairya137/rianalytics:latest
       
-    - name: Docker Push
-      run: docker push dhairya137/rianalytics:latest
+    # - name: Docker Push
+    #   run: docker push dhairya137/rianalytics:latest
 
     - name: Push image to Azure Container Registry
       run: docker push rianalytics.azurecr.io/rianalytics:latest
