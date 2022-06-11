@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ["https://rianalytics.wonderfulsea-39291c4b.eastasia.azurecontainerapps.io/text/textform"]
+CSRF_TRUSTED_ORIGINS = ["https://rianalytics.wonderfulsea-39291c4b.eastasia.azurecontainerapps.io"]
 
 # Application definition
 
